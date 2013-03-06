@@ -81,14 +81,14 @@ signed char s_open(char *t_port)
 	/* NOTE: it is a bad idea to use lsof, but the alternative
 	 * is to write large amount of code..
 	 */
-	sprintf(cmd, "lsof |grep %s 2>&1 >/dev/null", t_port);
+	/*sprintf(cmd, "lsof |grep %s 2>&1 >/dev/null", t_port);
 	x = system(cmd);
 	if (x == 0) {
 		S_ERROR("device %s being used already?\n", t_port);
 		sprintf(cmd, "lsof |grep %s", t_port);
 		x = system(cmd);
 		return SERIAL_FAILED;
-	}
+	}*/
 	fd = open(t_port, O_RDWR | O_NOCTTY);
 	if (fd < 0) {
 		S_ERROR("failed to open %s\n", t_port);
