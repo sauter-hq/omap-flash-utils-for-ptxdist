@@ -12,6 +12,10 @@ BASEDIR=$(dirname $0)
 if [ -z $1 ] || [ -z $2 ] || [ -z $3 ]; then
 	echo "Usage : "
 	echo "\t loadOnDeviceAndFlashWithBarebox.sh serial-device ptxdist-images-folder tftpserver-ipadress  tftpserver-prefix-to-images-folder"
+	echo "\t \t serial-device - path to tty (e.g. /dev/ttyS0)"
+	echo "\t \t ptxdist-images-folder - path to ptxdist generated images folder (e.g. workspace/ptxdistConfig/platform-phyCARD-L/images)"
+	echo "\t \t tftpserver-ipadress - ip of the tftp server"
+	echo "\t \t tftpserver-prefix-to-images-folder - path from tftp server to access the images folder provided as ptxdist-images-folder (i.e. usually the tftp server has a symlink to this images folder"
 	exit 1
 fi
 
@@ -106,10 +110,8 @@ if [ $RETVAL -eq 0 ]; then
 			exit 1
 		fi
 
-
 	 	logMessage "Configure barebox to access current tftp"
-		IPADDRESS=$3
-		sed "s/eth0\.serverip=[0-9\.]\+/eth0.serverip=$IPADDRESS/g" barebox-envconfig > /tmp/barebox-envconfig-adapted
+		sed "s/eth0\.serverip=[0-9\.]\+/eth0.serverip=${TFTP_SERVER_IP}/g" barebox-envconfig > /tmp/barebox-envconfig-adapted
 
 		$BASEDIR/ucmd -p ${SERIAL_PORT} -c "loadb -f env/config -c" -e "## Ready for binary (kermit) download"
 		$BASEDIR/ukermit -p ${SERIAL_PORT} -f /tmp/barebox-envconfig-adapted
