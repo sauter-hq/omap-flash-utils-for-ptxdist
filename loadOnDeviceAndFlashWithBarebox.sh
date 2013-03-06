@@ -231,6 +231,7 @@ configureBareboxForFlashingNand
 # Flash nand partitions from configured tftp
 logMessage "Flashing NAND from TFTP."
 flashNandPartThroughTftp x-loader ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/x-load.bin.ift
-flashNandPartThroughTftp barebox-image ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-image
+flashNandPartThroughTftp barebox ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-image
+flashNandPartThroughTftp bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-default-environment 
 flashNandPartThroughTftp kernel ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/linuximage
 flashNandPartThroughTftp rootfs ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/root.ubi
