@@ -13,3 +13,6 @@ fi
 
 $BASEDIR/pserial -p $1 -f $BASEDIR/x-load-withukermitsupport.bin -v
 $BASEDIR/ukermit -p $1 -f $2
+
+echo "U-Boot starting, waiting for prompt, and sending command to avoid autoboot... "
+$BASEDIR/ucmd -p $1 -c "pleaseDontAutoBoot" -e "PCA-102 #>" 
