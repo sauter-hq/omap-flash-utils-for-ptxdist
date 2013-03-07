@@ -6,13 +6,13 @@ This project provides utilities to flash all PTXdist generated images automatica
 
 ### How to use it ?
 #### Flashing linux system on device
-Simply build your linux system, plug your omap board with any serial interface and call loadOnDeviceAndFlashWithBarebox.sh :
 
-```shell
-	cd workspace/ptxdistConfig/
-	ptxdist go && ptxdist images
-	loadOnDeviceAndFlashWithBarebox.sh /dev/ttyUSB0 workspace/ptxdistConfig/platform-build/images/ 192.168.10.50 imagesRecovery 
-```
+Simply build your linux system :
+* `cd workspace/ptxdistConfig/`
+* `ptxdist go && ptxdist images`
+
+Plug your omap board with any serial interface and run :
+* `loadOnDeviceAndFlashWithBarebox.sh /dev/someTty workspace/ptxdistConfig/platform-build/images/ yourIpAddress tftpPrefixPathToImages`
 
 #### Booting over serial line
 Please take a look at ``loadOnDevice.sh`` to know hot to load a second stage bootloader (i.e. third file) over serial line with the pserial and ukermit tools.
