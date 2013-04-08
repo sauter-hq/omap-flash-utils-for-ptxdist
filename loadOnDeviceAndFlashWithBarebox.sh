@@ -92,7 +92,8 @@ configureBareboxForFlashingNand() {
 #!/bin/sh
 
 machine=pcaal1
-eccmode=bch8_hw
+eccmode=software 
+gpmc_nand0.eccmode=${eccmode}
 #user=
 
 # Enter MAC address here if not retrieved automatically
@@ -115,7 +116,7 @@ rootfs_loc=nand
 
 # for flash based rootfs: 'jffs2' or 'ubifs'
 # in case of disk any regular filesystem like 'ext2', 'ext3', 'reiserfs'
-rootfs_type=ubifs
+rootfs_type=jffs2
 # where is the rootfs in case of 'rootfs_loc=disk' (linux name)
 rootfs_part_linux_dev=mmcblk0p4
 rootfsimage=rootfs-\${machine}.\${rootfs_type}
@@ -146,14 +147,14 @@ fi
 
 autoboot_timeout=3
 
-bootargs="console=ttyO2,115200"
+bootargs="console=ttyS0,115200"
 
 # the following displays are supported
 # pd050vl1 (640 x 480)
 # pd035vl1 (640 x 480)
 # pd104slf (800 x 600)
 # pm070wl4 (800 x 480)
-display="pd050vl1"
+#display="pd050vl1"
 
 # omapfb.mode=<display>:<mode>,[,...]
 # omapfb.debug=<y|n>
@@ -172,7 +173,7 @@ rootfs_mtdblock_nand=4
 # set a fancy prompt (if support is compiled in)
 PS1="\e[1;32mbarebox@\e[1;31m\h:\w\e[0m "
 
-export display
+#export display
 EOF
 
 
@@ -232,6 +233,6 @@ configureBareboxForFlashingNand
 logMessage "Flashing NAND from TFTP."
 flashNandPartThroughTftp x-loader ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/x-load.bin.ift
 flashNandPartThroughTftp barebox ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-image
-flashNandPartThroughTftp bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-default-environment 
+#flashNandPartThroughTftp bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-default-environment 
 flashNandPartThroughTftp kernel ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/linuximage
-flashNandPartThroughTftp rootfs ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/root.ubi
+flashNandPartThroughTftp rootfs ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/root.jffs2
