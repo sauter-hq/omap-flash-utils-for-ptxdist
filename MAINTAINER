@@ -8,3 +8,8 @@
 Nishanth Menon <nm@ti.com>
 
     pusb  pserial  ukermit  ucmd  gpsign
+
+Damien Buhl <damien.buhl@lecbna.org>
+	
+	loadOnDevice.sh
+	loadOnDeviceAndFlashWithBarebox.sh
