@@ -4,6 +4,15 @@
 
 This project provides utilities to flash all PTXdist generated images automatically on target boards thanks to the serial interface. It bases itself on the [omap-u-boot-utils](https://github.com/nmenon/omap-u-boot-utils) project from Nishanth Menon.
 
+### How to build it ?
+To build the *omap-flash-utils-for-ptxdist* you can use CMake :
+```shell
+> mkdir build
+> cd build/
+> cmake ..
+> make
+```
+
 ### How to use it ?
 #### Flashing linux system on device
 
