@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.8)
 project (omap-flash-utils)
 
-SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror")
 
 # Define Executable Output Directory
 set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})

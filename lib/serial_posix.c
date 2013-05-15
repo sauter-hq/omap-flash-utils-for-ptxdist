@@ -70,8 +70,8 @@ static struct termios oldtio, newtio;
  */
 signed char s_open(char *t_port)
 {
-	int x;
-	char cmd[200];
+	/*int x;
+	char cmd[200];*/
 	if (fd) {
 		S_ERROR("Port is already open\n");
 		return SERIAL_FAILED;
