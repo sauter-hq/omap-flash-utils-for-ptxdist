@@ -21,10 +21,10 @@ Simply build your linux system :
 * `ptxdist go && ptxdist images`
 
 Plug your omap board with any serial interface and run :
-* `loadOnDeviceAndFlashWithBarebox.sh /dev/someTty workspace/ptxdistConfig/platform-build/images/ yourIpAddress tftpPrefixPathToImages`
+* `helpers/flash-device.sh /dev/someTty workspace/ptxdistConfig/platform-build/images/ yourIpAddress tftpPrefixPathToImages`
 
 #### Booting over serial line
-Please take a look at ``loadOnDevice.sh`` to know hot to load a second stage bootloader (i.e. third file) over serial line with the pserial and ukermit tools.
+Please take a look at ``helpers/load-on-device.sh`` to know hot to load a second stage bootloader (i.e. third file) over serial line with the pserial and ukermit tools.
 
 Additionally a documentation is available for these tools under docs/, you can also take a look to the originating project from which this fork comes, it provides more details in it's README about how to use the different pserial, ukermit... components.
 

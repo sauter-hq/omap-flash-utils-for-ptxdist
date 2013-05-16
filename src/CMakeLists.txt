@@ -12,3 +12,4 @@ INSTALL(TARGETS pserial ukermit ucmd gpsign tagger
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
 )
+
