@@ -7,6 +7,8 @@
 BASEDIR=$(dirname $0)
 BUILDDIR=${BASEDIR}/../build
 
+export PATH=$BUILDDIR:$PATH
+
 if [ -z $1 ] || [ -z $2 ] || [ -z $3 ] || [ -z $4 ] ; then
 	echo "Usage : "
 	echo -e "\t flash-device.sh serial-device ptxdist-images-folder tftpserver-ipadress  tftpserver-prefix-to-images-folder"
@@ -50,7 +52,7 @@ logError() {
 # serial line. Useful to avoid autoboot.
 #
 sendKeystrokesToUBoot () {
-	$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "pleaseDontAutoBoot" -e "PCA-102 #>" 
+	ucmd -p ${SERIAL_PORT} -c "pleaseDontAutoBoot" -e "PCA-102 #>" 
 	RETVAL=$?
 
 	if [ $RETVAL -ne 0 ]; then
@@ -63,7 +65,7 @@ sendKeystrokesToUBoot () {
 # serial line. Useful to avoid autoboot.
 #
 sendKeystrokesToBarebox() {
-	$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "pleaseDontAutoBoot" -e "barebox@" 
+	ucmd -p ${SERIAL_PORT} -c "pleaseDontAutoBoot" -e "barebox@" 
 	RETVAL=$?
 
 	if [ $RETVAL -ne 0 ]; then
@@ -80,9 +82,9 @@ configureBareboxForFlashingNand() {
 
 	logMessage "Load default environment and reinit" #Because barebox automatically takes what is stored on nand
 
-	$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "loadenv /dev/defaultenv" -e "loading environment from /dev/defaultenv"
-	$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "saveenv" -e "saving environment"
-	$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "go 0x82000000" -e "## Starting application at 0x82000000" 
+	ucmd -p ${SERIAL_PORT} -c "loadenv /dev/defaultenv" -e "loading environment from /dev/defaultenv"
+	ucmd -p ${SERIAL_PORT} -c "saveenv" -e "saving environment"
+	ucmd -p ${SERIAL_PORT} -c "go 0x82000000" -e "## Starting application at 0x82000000" 
 
 	logMessage "Barebox reinitialization, sending keystrokes to avoid autoboot.."
 	sendKeystrokesToBarebox 
@@ -177,9 +179,9 @@ export display
 EOF
 
 
-	$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "loadb -f env/config -c" -e "## Ready for binary (kermit) download"
-	$BUILDDIR/ukermit -p ${SERIAL_PORT} -f /tmp/barebox-envconfig-adapted
-	$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "saveenv" -e "saving environment"
+	ucmd -p ${SERIAL_PORT} -c "loadb -f env/config -c" -e "## Ready for binary (kermit) download"
+	ukermit -p ${SERIAL_PORT} -f /tmp/barebox-envconfig-adapted
+	ucmd -p ${SERIAL_PORT} -c "saveenv" -e "saving environment"
 
 	logMessage "Barebox ready for flashing over TFTP"
 }
@@ -198,34 +200,34 @@ flashNandPartThroughTftp() {
 
 	logMessage "Download'n flashing ${NANDPART} with tfp file : ${IMAGETOWRITE}"
 
-	$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "update -t ${NANDPART} -d nand -f ${IMAGETOWRITE}" -e "barebox@" 
+	ucmd -p ${SERIAL_PORT} -c "update -t ${NANDPART} -d nand -f ${IMAGETOWRITE}" -e "barebox@" 
 
 	logMessage "${NANDPART} flashed the image ${IMAGETOWRITE}"
 }
 
 # Bringing xloader in response to asic
 logMessage "Bringing x-loader with ukermit support on serial line"
-$BUILDDIR/pserial -p ${SERIAL_PORT} -f $BASEDIR/x-load-withukermitsupport.bin -v
+pserial -p ${SERIAL_PORT} -f $BASEDIR/x-load-withukermitsupport.bin -v
 
 # Bringing u-boot to xloader over serial line
 logMessage "Bringing u-boot over serial line"
-$BUILDDIR/ukermit -p ${SERIAL_PORT} -f ${PTXDIST_IMAGES_DIR}/u-boot.bin
+ukermit -p ${SERIAL_PORT} -f ${PTXDIST_IMAGES_DIR}/u-boot.bin
 logMessage " u-boot starting, sending keystrokes to avoid autoboot... "
 sendKeystrokesToUBoot
 
 # Bringing barebox on memory with kermit
 logMessage "Bringing barebox over serial line"
-$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "loadb" -e "## Ready for binary (kermit) download to 0x82000000" 
-$BUILDDIR/ukermit -p ${SERIAL_PORT} -f ${PTXDIST_IMAGES_DIR}/barebox-image 
+ucmd -p ${SERIAL_PORT} -c "loadb" -e "## Ready for binary (kermit) download to 0x82000000" 
+ukermit -p ${SERIAL_PORT} -f ${PTXDIST_IMAGES_DIR}/barebox-image 
 
 # Launching barebox 
-$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "go 0x82000000" -e "## Starting application at 0x82000000" 
+ucmd -p ${SERIAL_PORT} -c "go 0x82000000" -e "## Starting application at 0x82000000" 
 
 logMessage "Barebox starting, sending keystrokes to avoid autoboot ... "
 sendKeystrokesToBarebox 
 
 # Print version
-$BUILDDIR/ucmd -p ${SERIAL_PORT} -c "version" -e "barebox@" 
+ucmd -p ${SERIAL_PORT} -c "version" -e "barebox@" 
 
 configureBareboxForFlashingNand	
 
