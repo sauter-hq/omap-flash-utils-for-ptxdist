@@ -1,1 +1,0 @@
-sudo ./loadOnDeviceAndFlashWithBarebox.sh /dev/ttyUSB0 /home/buhldam/visionReparation1.3.2Images 192.168.10.50 imagesVisionReparation
