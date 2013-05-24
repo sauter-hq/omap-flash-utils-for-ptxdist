@@ -82,6 +82,10 @@ configureBareboxForFlashingNand() {
 
 	logMessage "Load default environment and reinit" #Because barebox automatically takes what is stored on nand
 
+	# On old system we have hamming for bootloader
+	ucmd -p ${SERIAL_PORT} -c "export eccmode=software" -e "barebox@"
+	ucmd -p ${SERIAL_PORT} -c "gpmc_nand0.eccmode=software" -e "barebox@"
+
 	ucmd -p ${SERIAL_PORT} -c "loadenv /dev/defaultenv" -e "loading environment from /dev/defaultenv"
 	ucmd -p ${SERIAL_PORT} -c "saveenv" -e "saving environment"
 	ucmd -p ${SERIAL_PORT} -c "go 0x82000000" -e "## Starting application at 0x82000000" 
@@ -179,10 +183,14 @@ PS1="\e[1;32mbarebox@\e[1;31m\h:\w\e[0m "
 #export display
 EOF
 
+	# On old system we have hamming for bootloader
+	ucmd -p ${SERIAL_PORT} -c "export eccmode=software" -e "barebox@"
+	ucmd -p ${SERIAL_PORT} -c "gpmc_nand0.eccmode=software" -e "barebox@"
 
 	ucmd -p ${SERIAL_PORT} -c "loadb -f env/config -c" -e "## Ready for binary (kermit) download"
 	ukermit -p ${SERIAL_PORT} -f /tmp/barebox-envconfig-adapted
 	ucmd -p ${SERIAL_PORT} -c "saveenv" -e "saving environment"
+	
 
 	logMessage "Barebox ready for flashing over TFTP"
 }
@@ -236,6 +244,6 @@ configureBareboxForFlashingNand
 logMessage "Flashing NAND from TFTP."
 flashNandPartThroughTftp x-loader ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/x-load.bin.ift
 flashNandPartThroughTftp barebox ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-image-old
-#flashNandPartThroughTftp bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-default-environment 
+flashNandPartThroughTftp bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-old-default-environment 
 flashNandPartThroughTftp kernel ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/linuximage
 flashNandPartThroughTftp rootfs ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/root.jffs2
