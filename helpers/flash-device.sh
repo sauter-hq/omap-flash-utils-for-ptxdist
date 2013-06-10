@@ -80,14 +80,9 @@ sendKeystrokesToBarebox() {
 # 
 configureBareboxForFlashingNand() {
 
-	logMessage "Load default environment and reinit" #Because barebox automatically takes what is stored on nand
+	logMessage "Load default environment" #Because barebox automatically takes what is stored on nand
 
 	ucmd -p ${SERIAL_PORT} -c "loadenv /dev/defaultenv" -e "loading environment from /dev/defaultenv"
-	ucmd -p ${SERIAL_PORT} -c "saveenv" -e "saving environment"
-	ucmd -p ${SERIAL_PORT} -c "go 0x82000000" -e "## Starting application at 0x82000000" 
-
-	logMessage "Barebox reinitialization, sending keystrokes to avoid autoboot.."
-	sendKeystrokesToBarebox 
 
 	logMessage "Configure barebox to access current tftp"
 
@@ -178,10 +173,8 @@ PS1="\e[1;32mbarebox@\e[1;31m\h:\w\e[0m "
 export display
 EOF
 
-
 	ucmd -p ${SERIAL_PORT} -c "loadb -f env/config -c" -e "## Ready for binary (kermit) download"
 	ukermit -p ${SERIAL_PORT} -f /tmp/barebox-envconfig-adapted
-	ucmd -p ${SERIAL_PORT} -c "saveenv" -e "saving environment"
 
 	logMessage "Barebox ready for flashing over TFTP"
 }
