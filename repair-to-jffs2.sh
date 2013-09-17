@@ -16,7 +16,7 @@ CURRENT_IPADDR=$2
 
 IMAGESDIR_ABS=$(dirname $(readlink -e ${IMAGESDIR}))/$(basename ${IMAGESDIR}) 
 echo "Opening TFTP Server for access to : ${IMAGESDIR_ABS}"
-in.tftpd -u root -4 -v --verbosity 8 -p -a 0.0.0.0:69 -l --foreground ${IMAGESDIR_ABS} &
+in.tftpd -u root -4 -v --verbosity 8 -p -a 0.0.0.0:69 -l --foreground --secure ${IMAGESDIR_ABS} &
 TFTPD_PID=$! 
 trap "kill -TERM ${TFTPD_PID}" 0
 
