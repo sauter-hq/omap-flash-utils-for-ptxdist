@@ -199,7 +199,7 @@ flashNandPartThroughTftp() {
 
 
 	logMessage "Setting ECC Mode"
-	ucmd -p ${SERIAL_PORT} -c "gpmc_nand0.eccmode=hamming_hw_romcode" -e "barebox@"
+	ucmd -p ${SERIAL_PORT} -c "gpmc_nand0.eccmode=${ECCMODE}" -e "barebox@"
 
 	logMessage "Registering bad block aware device"
 	ucmd -p ${SERIAL_PORT} -c "nand -a /dev/nand0.${NANDPART}" -e "barebox@" 
