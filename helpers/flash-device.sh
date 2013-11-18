@@ -211,7 +211,7 @@ sendKeystrokesToUBoot
 # Bringing barebox on memory with kermit
 logMessage "Bringing barebox over serial line"
 ucmd -p ${SERIAL_PORT} -c "loadb" -e "## Ready for binary (kermit) download to 0x82000000" 
-ukermit -p ${SERIAL_PORT} -f ${PTXDIST_IMAGES_DIR}/barebox-image 
+ukermit -p ${SERIAL_PORT} -f $BASEDIR/barebox-flasher-image 
 
 # Launching barebox 
 ucmd -p ${SERIAL_PORT} -c "go 0x82000000" -e "## Starting application at 0x82000000" 
@@ -226,7 +226,7 @@ configureBareboxForFlashingNand
 
 # Flash nand partitions from configured tftp
 logMessage "Flashing NAND from TFTP."
-flashNandPartThroughTftp x-loader ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/x-load.bin.ift
+flashNandPartThroughTftp x-loader ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
 flashNandPartThroughTftp barebox ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-image
 flashNandPartThroughTftp bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-default-environment 
 flashNandPartThroughTftp kernel ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/linuximage
