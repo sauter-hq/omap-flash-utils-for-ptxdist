@@ -4,7 +4,7 @@ BASEDIR=$(dirname $0)
 
 if [ -z $1 ] || [ -z $2 ] || [ -z $3 ]; then
         echo "Usage : "
-        echo -e "\t repair-to-jffs2.sh <tty-path> <current-pc-ipaddr>"
+        echo -e "\t flash-image.sh <tty-path> <current-pc-ipaddr> <images-path>"
 				echo -e "\t \t tty-path \t \t path to a serial device, e.g. /dev/ttyUSB0"
 				echo -e "\t \t current-pc-ipaddr \t \t ip address which is accessible by the device (used for tftp)"
 				echo -e "\t \t images-path \t \t Path where the images to flash are provided."
