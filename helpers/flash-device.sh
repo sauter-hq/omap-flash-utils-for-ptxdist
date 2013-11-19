@@ -169,7 +169,7 @@ bootargs="\$bootargs \${omap3_fb0.bootargs} omapdss.def_disp=\${display}"
 #bootargs="\$bootargs omapdss.def_disp=pd104slf"
 #bootargs="\$bootargs omapdss.def_disp=pm070wl4"
 
-nand_parts="512k(x-loader)ro,1920k(barebox),128k(bareboxenv),4M(kernel),-(root)"
+nand_parts="128k(x-loader)ro,128k(x-loader2)ro,128k(x-loader3)ro,128k(x-loader4)ro,1920k(barebox),128k(bareboxenv),4M(kernel),-(root)"
 nand_device=omap2-nand
 rootfs_mtdblock_nand=4
 
@@ -183,6 +183,12 @@ EOF
 	ukermit -p ${SERIAL_PORT} -f /tmp/barebox-envconfig-adapted
 	
 	ucmd -p ${SERIAL_PORT} -c "source env/config" -e "barebox@"
+
+	# Now sets up the devices we need
+	ucmd -p ${SERIAL_PORT} -c "nand -d /dev/nand0.*.bb" -e "barebox@"
+	ucmd -p ${SERIAL_PORT} -c "delpart /dev/nand0.*" -e "barebox@"
+	ucmd -p ${SERIAL_PORT} -c "addpart /dev/nand0 \${nand_parts}" -e "barebox@"
+	ucmd -p ${SERIAL_PORT} -c "nand -a /dev/nand0.*" -e "barebox@"
 
 	logMessage "Barebox ready for flashing over TFTP"
 }
@@ -203,9 +209,6 @@ flashNandPartThroughTftp() {
 
 	logMessage "Setting ECC Mode"
 	ucmd -p ${SERIAL_PORT} -c "gpmc_nand0.eccmode=${ECCMODE}" -e "barebox@"
-
-	logMessage "Registering bad block aware device"
-	ucmd -p ${SERIAL_PORT} -c "nand -a /dev/nand0.${NANDPART}" -e "barebox@" 
 
 	logMessage "Erasing device"
 	ucmd -p ${SERIAL_PORT} -c "erase /dev/nand0.${NANDPART}.bb" -e "barebox@"
@@ -245,6 +248,9 @@ configureBareboxForFlashingNand
 # Flash nand partitions from configured tftp
 logMessage "Flashing NAND from TFTP."
 flashNandPartThroughTftp hamming_hw_romcode x-loader ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
+flashNandPartThroughTftp hamming_hw_romcode x-loader2 ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
+flashNandPartThroughTftp hamming_hw_romcode x-loader3 ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
+flashNandPartThroughTftp hamming_hw_romcode x-loader4 ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
 flashNandPartThroughTftp bch8_hw barebox ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-image
 flashNandPartThroughTftp bch8_hw bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-default-environment 
 flashNandPartThroughTftp bch8_hw kernel ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/linuximage
