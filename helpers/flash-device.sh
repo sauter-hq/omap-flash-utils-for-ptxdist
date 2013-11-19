@@ -82,6 +82,7 @@ configureBareboxForFlashingNand() {
 
 	logMessage "Load default environment" #Because barebox automatically takes what is stored on nand
 
+	# On old system we have hamming for bootloader
 	ucmd -p ${SERIAL_PORT} -c "loadenv /dev/defaultenv" -e "loading environment from /dev/defaultenv"
 
 	logMessage "Configure barebox to access current tftp"
@@ -90,6 +91,8 @@ configureBareboxForFlashingNand() {
 #!/bin/sh
 
 machine=pcaal1
+eccmode=software 
+gpmc_nand0.eccmode=${eccmode}
 eccmode=bch8_hw
 #user=
 
@@ -113,6 +116,7 @@ rootfs_loc=nand
 
 # for flash based rootfs: 'jffs2' or 'ubifs'
 # in case of disk any regular filesystem like 'ext2', 'ext3', 'reiserfs'
+rootfs_type=jffs2
 rootfs_type=ubifs
 # where is the rootfs in case of 'rootfs_loc=disk' (linux name)
 rootfs_part_linux_dev=mmcblk0p4
@@ -144,6 +148,7 @@ fi
 
 autoboot_timeout=3
 
+bootargs="console=ttyS0,115200"
 bootargs="console=ttyO2,115200"
 
 # the following displays are supported
@@ -151,6 +156,7 @@ bootargs="console=ttyO2,115200"
 # pd035vl1 (640 x 480)
 # pd104slf (800 x 600)
 # pm070wl4 (800 x 480)
+#display="pd050vl1"
 display="pd050vl1"
 
 # omapfb.mode=<display>:<mode>,[,...]
@@ -175,6 +181,8 @@ EOF
 
 	ucmd -p ${SERIAL_PORT} -c "loadb -f env/config -c" -e "## Ready for binary (kermit) download"
 	ukermit -p ${SERIAL_PORT} -f /tmp/barebox-envconfig-adapted
+	
+	ucmd -p ${SERIAL_PORT} -c "source env/config" -e "barebox@"
 
 	logMessage "Barebox ready for flashing over TFTP"
 }
@@ -188,12 +196,22 @@ EOF
 #
 flashNandPartThroughTftp() {
 	
-	NANDPART=$1
-	IMAGETOWRITE=$2
+	ECCMODE=$1
+	NANDPART=$2
+	IMAGETOWRITE=$3
+
+
+	logMessage "Setting ECC Mode"
+	ucmd -p ${SERIAL_PORT} -c "gpmc_nand0.eccmode=${ECCMODE}" -e "barebox@"
+
+	logMessage "Registering bad block aware device"
+	ucmd -p ${SERIAL_PORT} -c "nand -a /dev/nand0.${NANDPART}" -e "barebox@" 
+
+	logMessage "Erasing device"
+	ucmd -p ${SERIAL_PORT} -c "erase /dev/nand0.${NANDPART}.bb" -e "barebox@"
 
 	logMessage "Download'n flashing ${NANDPART} with tfp file : ${IMAGETOWRITE}"
-
-	ucmd -p ${SERIAL_PORT} -c "update -t ${NANDPART} -d nand -f ${IMAGETOWRITE}" -e "barebox@" 
+	ucmd -p ${SERIAL_PORT} -c "tftp ${IMAGETOWRITE} /dev/nand0.${NANDPART}.bb" -e "barebox@" 
 
 	logMessage "${NANDPART} flashed the image ${IMAGETOWRITE}"
 }
@@ -226,8 +244,8 @@ configureBareboxForFlashingNand
 
 # Flash nand partitions from configured tftp
 logMessage "Flashing NAND from TFTP."
-flashNandPartThroughTftp x-loader ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
-flashNandPartThroughTftp barebox ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-image
-flashNandPartThroughTftp bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-default-environment 
-flashNandPartThroughTftp kernel ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/linuximage
-flashNandPartThroughTftp rootfs ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/root.ubi
+flashNandPartThroughTftp hamming_hw_romcode x-loader ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
+flashNandPartThroughTftp bch8_hw barebox ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-image
+flashNandPartThroughTftp bch8_hw bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-default-environment 
+flashNandPartThroughTftp bch8_hw kernel ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/linuximage
+flashNandPartThroughTftp bch8_hw root ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/root.ubi
