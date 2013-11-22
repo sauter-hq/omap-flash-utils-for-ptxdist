@@ -9,7 +9,7 @@ BUILDDIR=${BASEDIR}/../build
 
 export PATH=$BUILDDIR:$PATH
 
-if [ -z $1 ] || [ -z $2 ] || [ -z $3 ] || [ -z $4 ] ; then
+if [ -z $1 ] || [ -z $2 ] || [ -z $3 ] ; then
 	echo "Usage : "
 	echo -e "\t flash-device.sh serial-device ptxdist-images-folder tftpserver-ipadress  tftpserver-prefix-to-images-folder"
 	echo ""
@@ -247,11 +247,11 @@ configureBareboxForFlashingNand
 
 # Flash nand partitions from configured tftp
 logMessage "Flashing NAND from TFTP."
-flashNandPartThroughTftp hamming_hw_romcode x-loader ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
-flashNandPartThroughTftp hamming_hw_romcode x-loader2 ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
-flashNandPartThroughTftp hamming_hw_romcode x-loader3 ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
-flashNandPartThroughTftp hamming_hw_romcode x-loader4 ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/MLO
-flashNandPartThroughTftp bch8_hw barebox ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-image
-flashNandPartThroughTftp bch8_hw bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/barebox-default-environment 
-flashNandPartThroughTftp bch8_hw kernel ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/linuximage
-flashNandPartThroughTftp bch8_hw root ${TFTP_SERVER_PTXDIST_IMAGES_DIR}/root.ubi
+flashNandPartThroughTftp hamming_hw_romcode x-loader ${TFTP_SERVER_PTXDIST_IMAGES_DIR}MLO
+flashNandPartThroughTftp hamming_hw_romcode x-loader2 ${TFTP_SERVER_PTXDIST_IMAGES_DIR}MLO
+flashNandPartThroughTftp hamming_hw_romcode x-loader3 ${TFTP_SERVER_PTXDIST_IMAGES_DIR}MLO
+flashNandPartThroughTftp hamming_hw_romcode x-loader4 ${TFTP_SERVER_PTXDIST_IMAGES_DIR}MLO
+flashNandPartThroughTftp bch8_hw barebox ${TFTP_SERVER_PTXDIST_IMAGES_DIR}barebox-image
+flashNandPartThroughTftp bch8_hw bareboxenv ${TFTP_SERVER_PTXDIST_IMAGES_DIR}barebox-default-environment 
+flashNandPartThroughTftp bch8_hw kernel ${TFTP_SERVER_PTXDIST_IMAGES_DIR}linuximage
+flashNandPartThroughTftp bch8_hw root ${TFTP_SERVER_PTXDIST_IMAGES_DIR}root.ubi

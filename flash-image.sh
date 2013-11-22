@@ -2,7 +2,7 @@
 
 BASEDIR=$(dirname $0)
 
-if [ -z $1 ] || [ -z $2 ] || [ -z $3 ]; then
+if [ -z $1 ] || [ -z $2 ]; then
         echo "Usage : "
         echo -e "\t flash-image.sh <tty-path> <current-pc-ipaddr> <images-path>"
 				echo -e "\t \t tty-path \t \t path to a serial device, e.g. /dev/ttyUSB0"
@@ -22,4 +22,4 @@ in.tftpd -u root -4 -v --verbosity 8 -p -a 0.0.0.0:69 -l --foreground --secure $
 TFTPD_PID=$! 
 trap "kill -TERM ${TFTPD_PID}" 0
 
-helpers/flash-device.sh ${TTY_PATH} ${IMAGESDIR_ABS} ${CURRENT_IPADDR} ${IMAGESDIR_ABS} 
+helpers/flash-device.sh ${TTY_PATH} ${IMAGESDIR_ABS} ${CURRENT_IPADDR}
